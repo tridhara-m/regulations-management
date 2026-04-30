@@ -29,12 +29,27 @@ public class EurlexService {
 	public List<String> fetchCelexIds() {
 
 		String query = """
-												SELECT ?celex
-				WHERE {
-				  ?work <http://publications.europa.eu/ontology/cdm#resource_legal_id_celex> ?celex .
-				}
-				LIMIT 1
-												""";
+		        SELECT ?p ?o WHERE {
+  ?work <http://publications.europa.eu/ontology/cdm#resource_legal_id_celex> ?celex .
+  FILTER (STR(?celex) = "31993R0741")
+
+  ?exp <http://publications.europa.eu/ontology/cdm#expression_belongs_to_work> ?work .
+  ?exp ?p ?o .
+}
+LIMIT 30
+		        """;
+		
+//		String query = """
+//		        PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+//
+//		        SELECT ?celex ?title WHERE {
+//		          ?work cdm:resource_legal_id_celex ?celex .
+//		          ?work cdm:title ?title .
+//		          FILTER (lang(?title) = 'en')
+//		        }
+//		        LIMIT 10
+//		        """;
+
 		List<String> celexList = new ArrayList<>();
 		Query queryObj = QueryFactory.create(query);
 		try (QueryExecution qe = (QueryExecutionHTTP.service(ENDPOINT).query(queryObj)).sendMode(QuerySendMode.asPost)

@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.regulations.demo.entity.Regulation;
 import com.regulations.demo.repository.RegulationRepository;
+import com.regulations.demo.service.EurLexSoapClient;
 import com.regulations.demo.service.EurlexService;
+import com.regulations.demo.service.SparqlPOC;
 
 @RestController
 @RequestMapping("/regulations")
@@ -17,6 +19,15 @@ public class RegulationController {
 
     @Autowired
     private EurlexService service;
+    
+//    @Autowired
+//    private EurLexSoapService eurlexService;
+    
+    @Autowired
+    private EurLexSoapClient eurLexSoapClient;
+    
+    @Autowired
+    private SparqlPOC sparqlpoc;
     
     
     @Autowired
@@ -31,5 +42,20 @@ public class RegulationController {
     @GetMapping("/getAllRegulations")
     public List<Regulation> getAll(){
     	return repository.findAll();
+    }
+    
+//    @GetMapping("/getEurLexRegulations")
+//    public String geteurlexRegs(){
+//    	return eurlexService.searchByDn();
+//    }
+    
+    @GetMapping("/eurlex")
+    public Object test() {
+        return eurLexSoapClient.search("DN=3*", 1, 10);
+    }
+    
+    @GetMapping("/fetchonereg")
+    public String fetchRegulation() {
+        return sparqlpoc.fetchReg();
     }
 }
